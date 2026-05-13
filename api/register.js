@@ -164,7 +164,7 @@ export default async function handler(req, res) {
     });
     if (icsError) throw icsError;
 
-    const firstName = fullName.split(' ')[0];
+    const firstName = fullName.trim().split(/\s+/)[0];
     const dateLong = formatDateLong(start, timezone);
     const localTimeRange = formatTimeRange(start, end, timezone);
     const supportEmail = process.env.SUPPORT_EMAIL || '';

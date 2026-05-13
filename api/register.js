@@ -179,7 +179,7 @@ export default async function handler(req, res) {
     });
 
     const resend = new Resend(process.env.RESEND_API_KEY);
-    await resend.emails.send({
+    const sendResult = await resend.emails.send({
       from: fromEmail,
       to: email,
       reply_to: process.env.REPLY_TO_EMAIL,
@@ -191,6 +191,11 @@ export default async function handler(req, res) {
         content: Buffer.from(icsValue).toString('base64'),
       }],
     });
+    if (sendResult && sendResult.error) {
+      console.error('Resend rejected the email', sendResult.error);
+      throw new Error(`Resend error: ${sendResult.error.message || JSON.stringify(sendResult.error)}`);
+    }
+    console.log('Resend accepted email', sendResult && sendResult.data && sendResult.data.id);
 
     res.status(200).json({ success: true });
   } catch (err) {

@@ -24,13 +24,14 @@ export function buildEmailHtml({
   const year = new Date().getFullYear();
   const logoUrl = process.env.LOGO_URL;
   const ciLogoUrl = process.env.CI_LOGO_URL;
-  const wordmarkRow = ciLogoUrl
-    ? `<tr><td align="center" style="padding: 0 0 28px 0;"><img src="${encodeURI(ciLogoUrl)}" alt="Critical Insights Inc." width="140" style="display:block; height:auto; max-width:140px; border:0; margin:0 auto;" /></td></tr>`
-    : `<tr><td align="center" style="padding: 0 0 28px 0; font-family: 'Inter Tight', Arial, sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #5a6b82;">Critical Insights Inc.</td></tr>`;
-  const logoBlock = `<table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" width="100%">
-  ${logoUrl ? `<tr><td align="center" style="padding: 0 0 8px 0;"><img src="${encodeURI(logoUrl)}" alt="Protocol IQ" width="120" style="display:block; height:auto; max-width:120px; border:0; margin:0 auto;" /></td></tr>` : ''}
-  ${wordmarkRow}
-</table>`;
+  const logoBlock = logoUrl
+    ? `<table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" width="100%">
+  <tr><td align="center" style="padding: 0 0 28px 0;"><img src="${encodeURI(logoUrl)}" alt="Protocol IQ" width="120" style="display:block; height:auto; max-width:120px; border:0; margin:0 auto;" /></td></tr>
+</table>`
+    : '';
+  const ciLogoFooterRow = ciLogoUrl
+    ? `<tr><td align="center" style="padding:28px 40px 8px;border-top:1px solid #eef1f6;"><img src="${encodeURI(ciLogoUrl)}" alt="Critical Insights Inc." width="140" style="display:block; height:auto; max-width:140px; border:0; margin:0 auto;" /></td></tr>`
+    : '';
   return `<!doctype html>
 <html lang="en">
 <head>
@@ -53,7 +54,7 @@ export function buildEmailHtml({
                 Hi ${safe.firstName},
               </p>
               <p style="margin:0 0 22px;font-family:'Inter Tight',Arial,sans-serif;font-size:15px;line-height:1.6;color:#3a4a63;">
-                Thanks for signing up for our Protocol IQ information session. We're looking forward to walking you through the platform and hearing your perspective on how evidence-based protocols can better support your NICU.
+                Thanks for signing up for our <a href="https://protocoliq.criticalinsights.ai/" style="color:#1a3c6e;text-decoration:underline;">Protocol IQ</a> information session. We're looking forward to walking you through the platform and hearing your perspective on how evidence-based protocols can better support your NICU.
               </p>
 
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#fbfaf6;border:1px solid #eef1f6;border-radius:6px;margin:0 0 24px;">
@@ -96,16 +97,17 @@ export function buildEmailHtml({
 
               <p style="margin:0;font-family:'Inter Tight',Arial,sans-serif;font-size:15px;line-height:1.6;color:#0f1d33;">
                 Warmly,<br>
-                Rohan Chopra<br>
+                Ribhav Chopra<br>
                 Critical Insights Inc.
               </p>
             </td>
           </tr>
+          ${ciLogoFooterRow}
           <tr>
-            <td style="padding:18px 40px 28px;border-top:1px solid #eef1f6;">
-              <p style="margin:0;font-family:'Inter Tight',Arial,sans-serif;font-size:12px;line-height:1.5;color:#8794a8;">
+            <td style="padding:${ciLogoUrl ? '8px' : '18px'} 40px 28px;${ciLogoUrl ? '' : 'border-top:1px solid #eef1f6;'}">
+              <p style="margin:0;font-family:'Inter Tight',Arial,sans-serif;font-size:12px;line-height:1.5;color:#8794a8;text-align:${ciLogoUrl ? 'center' : 'left'};">
                 Questions? <a href="mailto:${safe.supportEmail}" style="color:#5a6b82;text-decoration:none;">${safe.supportEmail}</a><br>
-                © ${year} Organization Name
+                © ${year} Critical Insights Inc.
               </p>
             </td>
           </tr>
@@ -122,13 +124,11 @@ export function buildEmailText({
   hostTimezone, meetingUrl, supportEmail,
 }) {
   return [
-    `CRITICAL INSIGHTS INC.`,
-    ``,
     `You're registered`,
     ``,
     `Hi ${firstName},`,
     ``,
-    `Thanks for signing up for our Protocol IQ information session. We're looking forward to walking you through the platform and hearing your perspective on how evidence-based protocols can better support your NICU.`,
+    `Thanks for signing up for our Protocol IQ information session (https://protocoliq.criticalinsights.ai/). We're looking forward to walking you through the platform and hearing your perspective on how evidence-based protocols can better support your NICU.`,
     ``,
     `${dateLong}`,
     `${localTimeRange} · ${viewerTz}`,
@@ -143,9 +143,11 @@ export function buildEmailText({
     `If you have any questions before then, just reply to this email and we'll get back to you. We're excited to have you join us.`,
     ``,
     `Warmly,`,
-    `Rohan Chopra`,
+    `Ribhav Chopra`,
     `Critical Insights Inc.`,
     ``,
+    `──────────────────`,
     `Questions? ${supportEmail}`,
+    `© ${new Date().getFullYear()} Critical Insights Inc.`,
   ].join('\n');
 }

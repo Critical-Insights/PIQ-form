@@ -1,0 +1,7 @@
+html, body, #root { height: 100%; margin: 0; }
+body {
+  font-family: "Inter Tight", -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #f7f6f2;
+  color: #0f1d33;
+}
+*, *::before, *::after { box-sizing: border-box; }
